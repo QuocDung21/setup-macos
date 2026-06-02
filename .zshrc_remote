@@ -1,0 +1,59 @@
+# ==============================================================================
+# 1. POWERLEVEL10K INSTANT PROMPT (MUST BE AT THE VERY TOP)
+# ==============================================================================
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# ==============================================================================
+# 2. HOMEBREW (Load early to initialize HOMEBREW_PREFIX and env variables)
+# ==============================================================================
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# ==============================================================================
+# 3. LOAD MODULAR CUSTOM CONFIG FILES
+# ==============================================================================
+source "$HOME/.zsh_custom/paths.zsh"
+source "$HOME/.zsh_custom/tools.zsh"
+source "$HOME/.zsh_custom/aliases.zsh"
+
+# ==============================================================================
+# 4. ZINIT & PLUGINS (REPLACING OH MY ZSH)
+# ==============================================================================
+# Initialize Zinit (Homebrew installation path)
+source /opt/homebrew/opt/zinit/zinit.zsh
+
+# Load Powerlevel10k theme asynchronously
+zinit ice depth=1; zinit light romkatv/powerlevel10k
+
+# Borrow useful libraries and plugins from Oh My Zsh (as snippets)
+zinit snippet OMZL::history.zsh
+zinit snippet OMZL::completion.zsh
+zinit snippet OMZP::git
+
+# Load auto-suggestions and completions plugins
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+
+# Initialize Zsh's auto-completion system
+autoload -Uz compinit
+compinit
+zinit cdreplay -q
+
+# Syntax highlighting (NOTE: THIS MUST ALWAYS BE THE LAST PLUGIN LOADED)
+zinit light zsh-users/zsh-syntax-highlighting
+
+# ==============================================================================
+# 5. CLEAN UP PATH & RESET HASH (Removes duplicates from PATH)
+# ==============================================================================
+typeset -U path PATH
+hash -r
+
+# ==============================================================================
+# 6. LOAD P10K CONFIG (MUST BE AT THE VERY BOTTOM)
+# ==============================================================================
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
