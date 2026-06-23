@@ -1,0 +1,58 @@
+
+ZSH_CONFIG_DIR="$HOME/.config/zsh"
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+
+source "$ZSH_CONFIG_DIR/options.zsh"
+source "$ZSH_CONFIG_DIR/aliases.zsh"
+source "$ZSH_CONFIG_DIR/functions.zsh"
+
+if [[ -f "$ZINIT_HOME/zinit.zsh" ]]; then
+  source "$ZINIT_HOME/zinit.zsh"
+
+  # Input helpers
+  zinit light zsh-users/zsh-autosuggestions
+fi
+
+# Docker Desktop completions
+fpath=(/Users/dungnguyenquoc/.docker/completions $fpath)
+
+autoload -Uz compinit
+compinit
+
+if command -v fzf >/dev/null 2>&1 && [[ -o interactive && -t 0 && -t 1 ]]; then
+  source <(fzf --zsh)
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
+# Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+[[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]] && source "/opt/homebrew/opt/nvm/nvm.sh"
+[[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]] &&
+  source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$PNPM_HOME/bin:$PATH"
+
+# React Native: Java & Android SDK
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+
+# Rust
+export CARGO_HOME="$HOME/.cargo"
+export RUSTUP_HOME="$HOME/.rustup"
+export PATH="/opt/homebrew/opt/rustup/bin:$CARGO_HOME/bin:$PATH"
+
+# Starship prompt
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
+# Keep syntax highlighting last.
+if (( ${+commands[zinit]} || ${+functions[zinit]} )); then
+  zinit light zsh-users/zsh-syntax-highlighting
+fi

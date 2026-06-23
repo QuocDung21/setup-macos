@@ -1,0 +1,9 @@
+# ==================================================
+# Login shell config
+# ==================================================
+
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# User local bin
+export PATH="$HOME/.local/bin:$PATH"
